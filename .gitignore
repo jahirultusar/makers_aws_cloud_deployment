@@ -1,5 +1,38 @@
-**/venv
-**/deploy.sh
-**/postgres_deploy.sh
-**/*.pem
-**/__pycache__
+""" This is a .gitignore file"""
+
+# database migration
+/migrations/
+
+# Ignore instance folder
+/instance/
+
+# Ignore database files
+*.db
+
+
+.gitignore
+.DS_Store
+.env
+.flaskenv
+*.pyc
+*.pyo
+env/
+venv/
+.venv/
+env*
+dist/
+build/
+*.egg
+*.egg-info/
+.tox/
+.cache/
+.pytest_cache/
+.idea/
+docs/_build/
+.vscode
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+*,cover
