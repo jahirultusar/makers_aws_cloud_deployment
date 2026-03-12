@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy Message Server
 
 on:
   push:
@@ -7,11 +7,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    # "environment" must match the name of your GitHub environment
     environment: prod
 
     steps:
-      - name: Check out
+      - name: Check out code
         uses: actions/checkout@v4
 
       - name: Copy app to EC2
@@ -19,29 +18,31 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: "ec2-user"
-          port: 22
           key: ${{ secrets.EC2_SSH_KEY }}
-          # SOURCE uses underscore (matches your local/GitHub tree)
-          source: "message_server/*"
+          # Now that they are in the root, we only go one level deep
+          source: "message_server/app.py,message_server/Dockerfile,message_server/requirements.txt"
           target: "~/message-server"
           strip_components: 1
-          overwrite: true       
-          
+          overwrite: true
 
       - name: Build and run on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: "ec2-user"
-          port: 22
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             set -euo pipefail
             cd ~/message-server
+            
+            # Build the new image
             docker build --pull -t message-server:latest .
+            
+            # Stop and remove old container if it exists
             docker stop message-server || true
             docker rm message-server || true
-            docker image prune -f || true
+            
+            # Run the new container
             docker run -d \
               --name message-server \
               --restart unless-stopped \
@@ -52,3 +53,6 @@ jobs:
               -e POSTGRES_HOST='${{ secrets.POSTGRES_HOST }}' \
               -e POSTGRES_DB='postgres' \
               message-server:latest
+            
+            # Clean up old images to save space
+            docker image prune -f
