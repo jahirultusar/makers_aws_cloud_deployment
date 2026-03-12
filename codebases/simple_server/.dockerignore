@@ -1,0 +1,13 @@
+# Exclude the tests folder
+tests/
+
+# Exclude your local virtual environment (if you have one)
+.venv/
+venv/
+env/
+
+# Exclude Python cache and metadata
+__pycache__/
+*.pyc
+.git/
+README.md

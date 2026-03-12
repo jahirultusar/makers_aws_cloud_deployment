@@ -1,4 +1,5 @@
 **/venv
 **/deploy.sh
+**/postgres_deploy.sh
 **/*.pem
 **/__pycache__
