@@ -21,11 +21,13 @@ jobs:
           username: "ec2-user"
           port: 22
           key: ${{ secrets.EC2_SSH_KEY }}
-          # UPDATED: Added the folder prefix to the paths
-          source: "message_server/Dockerfile,message_server/app.py,message_server/requirements.txt"
-          target: ~/message-server
-          strip_components: 1 # This removes the 'message_server/' folder prefix so files land directly in ~/message-server
-
+          # SOURCE uses underscore (matches your local/GitHub tree)
+          source: "message_server/app.py,message_server/Dockerfile,message_server/requirements.txt"
+          # TARGET uses dash (matches your EC2 folder)
+          target: "~/message-server"
+          strip_components: 1
+          overwrite: true       
+          
 
       - name: Build and run on EC2
         uses: appleboy/ssh-action@v1.0.3
